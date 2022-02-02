@@ -179,22 +179,69 @@ void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO){
 void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int &vertexCount){
 
     unsigned int posVBO, colorVBO;
+
+    std::vector<float> posVec;
+    std::vector<float> colVec;
+
+    float numOfTriangles = 16;
+
+    for(int i = 0; i < (int)numOfTriangles; i++){
+        std::cout << "triangle: "  << i << std::endl;
+        posVec.push_back(0.0f);
+        posVec.push_back(0.0f);
+        posVec.push_back(0.0f);
+
+
+        float p1x = cos(((float)i/numOfTriangles)*3.1415f*2)/2;
+        float p1y = sin(((float)i/numOfTriangles)*3.1415f*2)/2;
+
+        float p2x = cos(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
+        float p2y = sin(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
+
+        std::cout << std::endl;
+
+        posVec.push_back(p1x);
+        posVec.push_back(p1y);
+        posVec.push_back(0.0f);
+
+        posVec.push_back(p2x);
+        posVec.push_back(p2y);
+        posVec.push_back(0.0f);
+
+        colVec.push_back(0.75f);
+        colVec.push_back(0.75f);
+        colVec.push_back(0.75f);
+        colVec.push_back(p1y);
+        colVec.push_back(p1x);
+        colVec.push_back(0.25f);
+        colVec.push_back(p2y);
+        colVec.push_back(p2x);
+        colVec.push_back(0.25f);
+    }
+
+    createArrayBuffer((posVec), posVBO);
+
+    /*
     createArrayBuffer(std::vector<float>{
             // position
             0.0f,  0.0f, 0.0f,
             0.5f,  0.0f, 0.0f,
             0.5f,  0.5f, 0.0f
     }, posVBO);
+    */
 
+    createArrayBuffer((colVec), colorVBO);
+
+    /*
     createArrayBuffer( std::vector<float>{
             // color
             1.0f,  0.0f, 0.0f,
             1.0f,  0.0f, 0.0f,
             1.0f,  0.0f, 0.0f
-    }, colorVBO);
+    }, colorVBO);*/
 
     // tell how many vertices to draw
-    vertexCount = 3;
+    vertexCount = 3 * (int)numOfTriangles;
 
     // create a vertex array object (VAO) on OpenGL and save a handle to it
     glGenVertexArrays(1, &VAO);
