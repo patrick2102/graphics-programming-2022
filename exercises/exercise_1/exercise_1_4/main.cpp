@@ -183,14 +183,10 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     std::vector<float> posVec;
     std::vector<float> colVec;
 
-    float numOfTriangles = 16;
+    float numOfTriangles = 3;
 
     for(int i = 0; i < (int)numOfTriangles; i++){
         std::cout << "triangle: "  << i << std::endl;
-        posVec.push_back(0.0f);
-        posVec.push_back(0.0f);
-        posVec.push_back(0.0f);
-
 
         float p1x = cos(((float)i/numOfTriangles)*3.1415f*2)/2;
         float p1y = sin(((float)i/numOfTriangles)*3.1415f*2)/2;
@@ -200,45 +196,14 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
 
         std::cout << std::endl;
 
-        posVec.push_back(p1x);
-        posVec.push_back(p1y);
-        posVec.push_back(0.0f);
+        posVec.insert(posVec.end(), {0.0f, 0.0f, 0.0f, p1x, p1y, 0.0f, p2x, p2y, 0.0f});
 
-        posVec.push_back(p2x);
-        posVec.push_back(p2y);
-        posVec.push_back(0.0f);
-
-        colVec.push_back(0.75f);
-        colVec.push_back(0.75f);
-        colVec.push_back(0.75f);
-        colVec.push_back(p1y);
-        colVec.push_back(p1x);
-        colVec.push_back(0.25f);
-        colVec.push_back(p2y);
-        colVec.push_back(p2x);
-        colVec.push_back(0.25f);
+        colVec.insert(colVec.end(), {0.75f, 0.75f, 0.75f, p1y, p1x, 0.25f,  });
     }
 
     createArrayBuffer((posVec), posVBO);
 
-    /*
-    createArrayBuffer(std::vector<float>{
-            // position
-            0.0f,  0.0f, 0.0f,
-            0.5f,  0.0f, 0.0f,
-            0.5f,  0.5f, 0.0f
-    }, posVBO);
-    */
-
     createArrayBuffer((colVec), colorVBO);
-
-    /*
-    createArrayBuffer( std::vector<float>{
-            // color
-            1.0f,  0.0f, 0.0f,
-            1.0f,  0.0f, 0.0f,
-            1.0f,  0.0f, 0.0f
-    }, colorVBO);*/
 
     // tell how many vertices to draw
     vertexCount = 3 * (int)numOfTriangles;

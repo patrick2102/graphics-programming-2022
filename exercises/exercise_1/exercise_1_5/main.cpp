@@ -11,6 +11,7 @@
 void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO);
 void setupShape(unsigned int shaderProgram, unsigned int &VAO, unsigned int &vertexCount);
 void draw(unsigned int shaderProgram, unsigned int VAO, unsigned int vertexCount);
+void rotate(const unsigned int shaderProgram, unsigned int &VAO, float inc);
 
 
 // glfw functions
@@ -48,7 +49,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
 
 int main()
 {
-
+    #pragma region Region_1
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -126,14 +127,15 @@ int main()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-
+    #pragma endregion Region_1
     // setup vertex array object (VAO)
     // -------------------------------
-    unsigned int VAO, vertexCount;
+    unsigned int VAO, vertexCount, posVBO, colVBO;
     // generate geometry in a vertex array object (VAO), record the number of vertices in the mesh,
     // tells the shader how to read it
     setupShape(shaderProgram, VAO, vertexCount);
 
+    float inc = 0.0f;
 
     // render loop
     // -----------
@@ -148,6 +150,10 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT); // clear the framebuffer
 
         draw(shaderProgram, VAO, vertexCount);
+
+        rotate(shaderProgram, VAO, inc);
+
+        inc -= 0.01f;
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -170,31 +176,42 @@ void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO){
     // bind the VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // set the content of the VBO (type, size, pointer to start, and how it is used)
-    glBufferData(GL_ARRAY_BUFFER, array.size() * sizeof(GLfloat), &array[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, array.size() * sizeof(GLfloat), &array[0], GL_DYNAMIC_DRAW);
 }
 
 
 // create the geometry, a vertex array object representing it, and set how a shader program should read it
 // -------------------------------------------------------------------------------------------------------
-void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int &vertexCount){
+void setupShape(const unsigned int shaderProgram, unsigned int &VAO, unsigned int &vertexCount){
 
-    unsigned int posVBO, colorVBO;
-    createArrayBuffer(std::vector<float>{
-            // position
-            0.0f,  0.0f, 0.0f,
-            0.5f,  0.0f, 0.0f,
-            0.5f,  0.5f, 0.0f
-    }, posVBO);
+    unsigned int posVBO, colVBO;
+    std::vector<float> posVec;
+    std::vector<float> colVec;
 
-    createArrayBuffer( std::vector<float>{
-            // color
-            1.0f,  0.0f, 0.0f,
-            1.0f,  0.0f, 0.0f,
-            1.0f,  0.0f, 0.0f
-    }, colorVBO);
+    float numOfTriangles = 4;
+
+    for(int i = 0; i < (int)numOfTriangles; i++){
+        std::cout << "triangle: "  << i << std::endl;
+
+        float p1x = cos(((float)i/numOfTriangles)*3.1415f*2)/2;
+        float p1y = sin(((float)i/numOfTriangles)*3.1415f*2)/2;
+
+        float p2x = cos(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
+        float p2y = sin(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
+
+        std::cout << std::endl;
+
+        posVec.insert(posVec.end(), {0.0f, 0.0f, 0.0f, p1x, p1y, 0.0f, p2x, p2y, 0.0f});
+
+        colVec.insert(colVec.end(), {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f});
+    }
+
+    createArrayBuffer(posVec, posVBO);
+
+    createArrayBuffer(colVec, colVBO);
 
     // tell how many vertices to draw
-    vertexCount = 3;
+    vertexCount = 3 * (int)numOfTriangles;
 
     // create a vertex array object (VAO) on OpenGL and save a handle to it
     glGenVertexArrays(1, &VAO);
@@ -212,7 +229,7 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, 0, 0);
 
     // set vertex shader attribute "aColor"
-    glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, colVBO);
 
     int colorSize = 3;
     int colorAttributeLocation = glGetAttribLocation(shaderProgram, "aColor");
@@ -220,6 +237,53 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     glEnableVertexAttribArray(colorAttributeLocation);
     glVertexAttribPointer(colorAttributeLocation, colorSize, GL_FLOAT, GL_FALSE, 0, 0);
 
+}
+
+void rotate(const unsigned int shaderProgram, unsigned int &VAO, float inc)
+{
+    unsigned int posVBO, colVBO;
+    std::vector<float> posVec;
+    std::vector<float> colVec;
+
+    float numOfTriangles = 4;
+
+    for(int i = 0; i < (int)numOfTriangles; i++){
+        //std::cout << "triangle: "  << i << std::endl;
+
+        float p1x = cos((((float)i + inc)/numOfTriangles)*3.1415f*2)/2;
+        float p1y = sin((((float)i + inc)/numOfTriangles)*3.1415f*2)/2;
+        float p2x = cos((((float)i + inc + 1)/numOfTriangles)*3.1415f*2)/2;
+        float p2y = sin((((float)i + inc + 1)/numOfTriangles)*3.1415f*2)/2;
+
+        posVec.insert(posVec.end(), {0.0f, 0.0f, 0.0f, p1x, p1y, 0.0f, p2x, p2y, 0.0f});
+        colVec.insert(colVec.end(), {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f});
+    }
+    createArrayBuffer(posVec, posVBO);
+    createArrayBuffer(colVec, colVBO);
+
+    // create a vertex array object (VAO) on OpenGL and save a handle to it
+    glGenVertexArrays(1, &VAO);
+
+    // bind vertex array object
+    glBindVertexArray(VAO);
+
+    // set vertex shader attribute "aPos"
+    glBindBuffer(GL_ARRAY_BUFFER, posVBO);
+
+    int posSize = 3;
+    int posAttributeLocation = glGetAttribLocation(shaderProgram, "aPos");
+
+    glEnableVertexAttribArray(posAttributeLocation);
+    glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // set vertex shader attribute "aColor"
+    glBindBuffer(GL_ARRAY_BUFFER, colVBO);
+
+    int colorSize = 3;
+    int colorAttributeLocation = glGetAttribLocation(shaderProgram, "aColor");
+
+    glEnableVertexAttribArray(colorAttributeLocation);
+    glVertexAttribPointer(colorAttributeLocation, colorSize, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 

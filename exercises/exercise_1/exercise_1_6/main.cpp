@@ -9,13 +9,16 @@
 // function declarations
 // ---------------------
 void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO);
+
 void setupShape(unsigned int shaderProgram, unsigned int &VAO, unsigned int &vertexCount);
+
 void draw(unsigned int shaderProgram, unsigned int VAO, unsigned int vertexCount);
 
 
 // glfw functions
 // --------------
-void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+void framebufferSizeCallback(GLFWwindow *window, int width, int height);
+
 void processInput(GLFWwindow *window);
 
 
@@ -45,9 +48,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
                                    "}\n\0";
 
 
-
-int main()
-{
+int main() {
 
     // glfw: initialize and configure
     // ------------------------------
@@ -63,9 +64,8 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
-    {
+    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
@@ -76,8 +76,7 @@ int main()
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
@@ -94,8 +93,7 @@ int main()
     int success;
     char infoLog[512];
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
+    if (!success) {
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
@@ -106,8 +104,7 @@ int main()
     glCompileShader(fragmentShader);
     // check for shader compile errors
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
+    if (!success) {
         glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
@@ -151,7 +148,8 @@ int main()
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window); // we normally use 2 frame buffers, a back (to draw on) and a front (to show on the screen)
+        glfwSwapBuffers(
+                window); // we normally use 2 frame buffers, a back (to draw on) and a front (to show on the screen)
         glfwPollEvents();
     }
 
@@ -164,7 +162,7 @@ int main()
 
 // create a vertex buffer object (VBO) from an array of values, return VBO handle (set as reference)
 // -------------------------------------------------------------------------------------------------
-void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO){
+void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO) {
     // create the VBO on OpenGL and get a handle to it
     glGenBuffers(1, &VBO);
     // bind the VBO
@@ -176,22 +174,24 @@ void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO){
 
 // create the geometry, a vertex array object representing it, and set how a shader program should read it
 // -------------------------------------------------------------------------------------------------------
-void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int &vertexCount){
+void setupShape(const unsigned int shaderProgram, unsigned int &VAO, unsigned int &vertexCount) {
 
-    unsigned int posVBO, colorVBO;
-    createArrayBuffer(std::vector<float>{
-            // position
-            0.0f,  0.0f, 0.0f,
-            0.5f,  0.0f, 0.0f,
-            0.5f,  0.5f, 0.0f
-    }, posVBO);
+    unsigned int VBO;
+    std::vector<float> vboVec =
+            std::vector<float>{
+                    // position
+                    0.0f, 0.0f, 0.0f,
+                    0.5f, 0.0f, 0.0f,
+                    0.5f, 0.5f, 0.0f,
+                    1.0f,  0.0f, 0.0f,
+                    1.0f,  0.0f, 0.0f,
+                    1.0f,  0.0f, 0.0f
+            };
 
-    createArrayBuffer( std::vector<float>{
-            // color
-            1.0f,  0.0f, 0.0f,
-            1.0f,  0.0f, 0.0f,
-            1.0f,  0.0f, 0.0f
-    }, colorVBO);
+    //Gen buffer
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vboVec.size() * sizeof(GLfloat), &vboVec[0], GL_STATIC_DRAW);
 
     // tell how many vertices to draw
     vertexCount = 3;
@@ -202,30 +202,23 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     // bind vertex array object
     glBindVertexArray(VAO);
 
-    // set vertex shader attribute "aPos"
-    glBindBuffer(GL_ARRAY_BUFFER, posVBO);
-
     int posSize = 3;
     int posAttributeLocation = glGetAttribLocation(shaderProgram, "aPos");
 
     glEnableVertexAttribArray(posAttributeLocation);
     glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, 0, 0);
 
-    // set vertex shader attribute "aColor"
-    glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
-
     int colorSize = 3;
     int colorAttributeLocation = glGetAttribLocation(shaderProgram, "aColor");
 
     glEnableVertexAttribArray(colorAttributeLocation);
-    glVertexAttribPointer(colorAttributeLocation, colorSize, GL_FLOAT, GL_FALSE, 0, 0);
-
+    glVertexAttribPointer(1, colorSize, GL_FLOAT, GL_FALSE, 0, (void*) (9 * sizeof(float)));
 }
 
 
 // tell opengl to draw a vertex array object (VAO) using a give shaderProgram
 // --------------------------------------------------------------------------
-void draw(const unsigned int shaderProgram, const unsigned int VAO, const unsigned int vertexCount){
+void draw(const unsigned int shaderProgram, const unsigned int VAO, const unsigned int vertexCount) {
     // set active shader program
     glUseProgram(shaderProgram);
     // bind vertex array object
@@ -237,8 +230,7 @@ void draw(const unsigned int shaderProgram, const unsigned int VAO, const unsign
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
-{
+void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
@@ -246,8 +238,7 @@ void processInput(GLFWwindow *window)
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
-void framebufferSizeCallback(GLFWwindow* window, int width, int height)
-{
+void framebufferSizeCallback(GLFWwindow *window, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);

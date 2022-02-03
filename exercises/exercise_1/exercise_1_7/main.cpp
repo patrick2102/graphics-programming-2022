@@ -178,23 +178,34 @@ void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO){
 // -------------------------------------------------------------------------------------------------------
 void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int &vertexCount){
 
-    unsigned int posVBO, colorVBO;
-    createArrayBuffer(std::vector<float>{
-            // position
-            0.0f,  0.0f, 0.0f,
-            0.5f,  0.0f, 0.0f,
-            0.5f,  0.5f, 0.0f
-    }, posVBO);
+    unsigned int VBO;
 
-    createArrayBuffer( std::vector<float>{
-            // color
-            1.0f,  0.0f, 0.0f,
-            1.0f,  0.0f, 0.0f,
-            1.0f,  0.0f, 0.0f
-    }, colorVBO);
+    std::vector<float> vboVec;
+
+    float numOfTriangles = 16;
+
+    for(int i = 0; i < (int)numOfTriangles; i++){
+
+        vboVec.insert(vboVec.end(), {0.0f, 0.0f, 0.0f});
+        vboVec.insert(vboVec.end(), {0.75f, 0.75f, 0.75f});
+
+        float p1x = cos(((float)i/numOfTriangles)*3.1415f*2)/2;
+        float p1y = sin(((float)i/numOfTriangles)*3.1415f*2)/2;
+
+        vboVec.insert(vboVec.end(), {p1x, p1y, 0.0f});
+        vboVec.insert(vboVec.end(), {p1y, p1x, 0.25f});
+
+        float p2x = cos(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
+        float p2y = sin(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
+
+        vboVec.insert(vboVec.end(), {p2x, p2y, 0.0f});
+        vboVec.insert(vboVec.end(), {p2y, p2x, 0.25f});
+    }
+
+    createArrayBuffer(vboVec, VBO);
 
     // tell how many vertices to draw
-    vertexCount = 3;
+    vertexCount = 3 * (int)numOfTriangles;
 
     // create a vertex array object (VAO) on OpenGL and save a handle to it
     glGenVertexArrays(1, &VAO);
@@ -202,23 +213,22 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     // bind vertex array object
     glBindVertexArray(VAO);
 
-    // set vertex shader attribute "aPos"
-    glBindBuffer(GL_ARRAY_BUFFER, posVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    int stride = 6 * sizeof(float);
 
     int posSize = 3;
     int posAttributeLocation = glGetAttribLocation(shaderProgram, "aPos");
 
+    glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, stride, 0);
     glEnableVertexAttribArray(posAttributeLocation);
-    glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // set vertex shader attribute "aColor"
-    glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
 
     int colorSize = 3;
     int colorAttributeLocation = glGetAttribLocation(shaderProgram, "aColor");
 
     glEnableVertexAttribArray(colorAttributeLocation);
-    glVertexAttribPointer(colorAttributeLocation, colorSize, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(1, colorSize, GL_FLOAT, GL_FALSE, stride, (void*) (3 * sizeof(float)));
+
 
 }
 
