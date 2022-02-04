@@ -184,8 +184,22 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     std::vector<unsigned int> vboIndices;
 
     std::vector<float> vboVec;
+    /*
+    vboIndices.insert(vboIndices.end(),
+                      {
+        //0, 1, 2, 1, 4, 1,
+        0, 2, 4,
+        0, 4, 6,
+        0, 6, 8,
+        0, 8, 2
+                              //0, 1, 4, 1, 6, 1,
+        //0, 1, 6, 1, 8, 1,
+        //0, 1, 8, 1, 2, 1,
+                      }
 
-    float numOfTriangles = 16;
+                      );*/
+
+    float numOfTriangles = 4;
 
     vboVec.insert(vboVec.end(), {0.0f, 0.0f, 0.0f});
     vboVec.insert(vboVec.end(), {1.0f, 1.0f, 1.0f});
@@ -198,11 +212,16 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
         float py = sin(((float)i/numOfTriangles)*3.1415f*2)/2;
 
         vboVec.insert(vboVec.end(), {px, py, 0.0f});
-        vboVec.insert(vboVec.end(), {1.0f, 1.0f, 1.0f});
+        vboVec.insert(vboVec.end(), {px, py, 1.0f});
 
-        vboIndices.insert(vboIndices.end(), 0);
-        vboIndices.insert(vboIndices.end(), currIndex+2);
-        vboIndices.insert(vboIndices.end(), currIndex+4);
+
+        vboIndices.insert(vboIndices.end(), 0);//position
+        //vboIndices.insert(vboIndices.end(), 1); // color
+        vboIndices.insert(vboIndices.end(), currIndex+2); //position
+        //vboIndices.insert(vboIndices.end(), 1); //color
+        vboIndices.insert(vboIndices.end(), currIndex+4); //position
+        //vboIndices.insert(vboIndices.end(), 1); //color
+
         currIndex += 2;
     }
 
@@ -212,9 +231,13 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     vboVec.insert(vboVec.end(), {px, py, 0.0f});
     vboVec.insert(vboVec.end(), {1.0f, 1.0f, 1.0f});
 
+
     vboIndices.insert(vboIndices.end(), 0);
+    //vboIndices.insert(vboIndices.end(), 1); //color
     vboIndices.insert(vboIndices.end(), currIndex+2);
+    //vboIndices.insert(vboIndices.end(), 1); //color
     vboIndices.insert(vboIndices.end(), 2);
+    //vboIndices.insert(vboIndices.end(), 1); //color
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -247,7 +270,8 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     int colorAttributeLocation = glGetAttribLocation(shaderProgram, "aColor");
 
     glEnableVertexAttribArray(colorAttributeLocation);
-    glVertexAttribPointer(colorAttributeLocation, colorSize, GL_FLOAT, GL_FALSE, stride, (void*) (3 * sizeof(float)));
+    //glVertexAttribPointer(colorAttributeLocation, colorSize, GL_FLOAT, GL_FALSE, stride, (void*) (3 * sizeof(float)));
+    glVertexAttribPointer(colorAttributeLocation, colorSize, GL_FLOAT, GL_FALSE, 0, (void*) (3 * sizeof(float)));
 
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
 
