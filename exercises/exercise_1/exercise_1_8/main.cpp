@@ -129,10 +129,12 @@ int main()
 
     // setup vertex array object (VAO)
     // -------------------------------
+
     unsigned int VAO, vertexCount;
     // generate geometry in a vertex array object (VAO), record the number of vertices in the mesh,
     // tells the shader how to read it
-    setupShape(shaderProgram, VAO, vertexCount);
+
+     setupShape(shaderProgram, VAO, vertexCount);
 
 
     // render loop
@@ -179,13 +181,21 @@ void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO){
 void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int &vertexCount){
     unsigned int VBO, EBO;
 
-    std::vector<float> vboVec, vboIndices;
+    //std::vector<unsigned int> vboIndices;
+    unsigned int vboIndices[] = {  // note that we start from 0!
+            0, 2, 4,  // first Triangle
+            0, 4, 6,  // second Triangle
+            0, 6, 8,  // second Triangle
+            0, 8, 2   // second Triangle
+    };
+    std::vector<float> vboVec;
 
     float numOfTriangles = 4;
 
     vboVec.insert(vboVec.end(), {0.0f, 0.0f, 0.0f});
     vboVec.insert(vboVec.end(), {1.0f, 1.0f, 1.0f});
-    int currIndex = 0;
+
+    unsigned int currIndex = 0;
 
     for(int i = 0; i < ((int)numOfTriangles-1); i++){
 
@@ -195,9 +205,9 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
         vboVec.insert(vboVec.end(), {px, py, 0.0f});
         vboVec.insert(vboVec.end(), {1.0f, 1.0f, 1.0f});
 
-        vboIndices.insert(vboIndices.end(), 0);
-        vboIndices.insert(vboIndices.end(), currIndex+2);
-        vboIndices.insert(vboIndices.end(), currIndex+4);
+        //vboIndices.insert(vboIndices.end(), 0);
+        //vboIndices.insert(vboIndices.end(), currIndex+2);
+        //vboIndices.insert(vboIndices.end(), currIndex+4);
         currIndex += 2;
     }
 
@@ -207,9 +217,9 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     vboVec.insert(vboVec.end(), {px, py, 0.0f});
     vboVec.insert(vboVec.end(), {1.0f, 1.0f, 1.0f});
 
-    vboIndices.insert(vboIndices.end(), 0);
-    vboIndices.insert(vboIndices.end(), currIndex+2);
-    vboIndices.insert(vboIndices.end(), 2);
+    //vboIndices.insert(vboIndices.end(), 0);
+    //vboIndices.insert(vboIndices.end(), currIndex+2);
+    //vboIndices.insert(vboIndices.end(), 2);
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -220,20 +230,22 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     glBufferData(GL_ARRAY_BUFFER, vboVec.size() * sizeof(GLfloat), &vboVec[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, vboIndices.size() * sizeof(GLfloat), &vboIndices[0], GL_STATIC_DRAW);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, vboIndices.size() * sizeof(GLfloat), &vboIndices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vboIndices), vboIndices, GL_STATIC_DRAW);
 
     // tell how many vertices to draw
-    vertexCount = 3 * (int)numOfTriangles;
-    //vertexCount = vboVec.size();
-    //vertexCount = vboVec.size();
+    //vertexCount = vboIndices.size();
+    vertexCount = sizeof(vboIndices);
 
     int stride = 6 * sizeof(float);
 
     int posSize = 3;
     int posAttributeLocation = glGetAttribLocation(shaderProgram, "aPos");
 
-    glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, stride, 0);
     glEnableVertexAttribArray(posAttributeLocation);
+    //glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, stride, 0);
+    glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, 0, 0);
+
 
     int colorSize = 3;
     int colorAttributeLocation = glGetAttribLocation(shaderProgram, "aColor");
@@ -241,9 +253,10 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     glEnableVertexAttribArray(colorAttributeLocation);
     glVertexAttribPointer(1, colorSize, GL_FLOAT, GL_FALSE, stride, (void*) (3 * sizeof(float)));
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glBindVertexArray(0);
+    //glBindVertexArray(0);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 }
 
 
@@ -256,7 +269,7 @@ void draw(const unsigned int shaderProgram, const unsigned int VAO, const unsign
     glBindVertexArray(VAO);
     // draw geometry
     //glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-    glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, vertexCount,   GL_UNSIGNED_INT, 0);
 }
 
 

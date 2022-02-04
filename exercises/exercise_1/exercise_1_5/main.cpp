@@ -188,7 +188,7 @@ void setupShape(const unsigned int shaderProgram, unsigned int &VAO, unsigned in
     std::vector<float> posVec;
     std::vector<float> colVec;
 
-    float numOfTriangles = 4;
+    float numOfTriangles = 16;
 
     for(int i = 0; i < (int)numOfTriangles; i++){
         std::cout << "triangle: "  << i << std::endl;
@@ -245,7 +245,7 @@ void rotate(const unsigned int shaderProgram, unsigned int &VAO, float inc)
     std::vector<float> posVec;
     std::vector<float> colVec;
 
-    float numOfTriangles = 4;
+    float numOfTriangles = 16;
 
     for(int i = 0; i < (int)numOfTriangles; i++){
         //std::cout << "triangle: "  << i << std::endl;

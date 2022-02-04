@@ -162,18 +162,6 @@ int main()
 }
 
 
-// create a vertex buffer object (VBO) from an array of values, return VBO handle (set as reference)
-// -------------------------------------------------------------------------------------------------
-void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO){
-    // create the VBO on OpenGL and get a handle to it
-    glGenBuffers(1, &VBO);
-    // bind the VBO
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // set the content of the VBO (type, size, pointer to start, and how it is used)
-    glBufferData(GL_ARRAY_BUFFER, array.size() * sizeof(GLfloat), &array[0], GL_STATIC_DRAW);
-}
-
-
 // create the geometry, a vertex array object representing it, and set how a shader program should read it
 // -------------------------------------------------------------------------------------------------------
 void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int &vertexCount){
@@ -202,18 +190,20 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
         vboVec.insert(vboVec.end(), {p2y, p2x, 0.25f});
     }
 
-    createArrayBuffer(vboVec, VBO);
-
     // tell how many vertices to draw
     vertexCount = 3 * (int)numOfTriangles;
 
     // create a vertex array object (VAO) on OpenGL and save a handle to it
     glGenVertexArrays(1, &VAO);
-
     // bind vertex array object
     glBindVertexArray(VAO);
 
+    // create the VBO on OpenGL and get a handle to it
+    glGenBuffers(1, &VBO);
+    // bind the VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // set the content of the VBO (type, size, pointer to start, and how it is used)
+    glBufferData(GL_ARRAY_BUFFER, vboVec.size() * sizeof(GLfloat), &vboVec[0], GL_STATIC_DRAW);
 
     int stride = 6 * sizeof(float);
 
@@ -227,9 +217,7 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     int colorAttributeLocation = glGetAttribLocation(shaderProgram, "aColor");
 
     glEnableVertexAttribArray(colorAttributeLocation);
-    glVertexAttribPointer(1, colorSize, GL_FLOAT, GL_FALSE, stride, (void*) (3 * sizeof(float)));
-
-
+    glVertexAttribPointer(colorAttributeLocation, colorSize, GL_FLOAT, GL_FALSE, stride, (void*) (3 * sizeof(float)));
 }
 
 
@@ -239,7 +227,7 @@ void draw(const unsigned int shaderProgram, const unsigned int VAO, const unsign
     // set active shader program
     glUseProgram(shaderProgram);
     // bind vertex array object
-    glBindVertexArray(VAO);
+    //glBindVertexArray(VAO);
     // draw geometry
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
