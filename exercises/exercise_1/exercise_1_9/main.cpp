@@ -154,12 +154,12 @@ int main()
         glClearColor(.2f, .2f, .2f, 1.0f); // background
         glClear(GL_COLOR_BUFFER_BIT); // clear the framebuffer
 
-        int mousePos = glfwGetMouseButton(window, 0); //0 left mouse button 1 right mouse button
+        int mousePress = glfwGetMouseButton(window, 0); //0 left mouse button 1 right mouse button
 
         double xPos;
         double yPos;
 
-        if(mousePos) {
+        if(mousePress) {
           glfwGetCursorPos(window, &xPos, &yPos);
 
           double xndc = xPos/SCR_WIDTH * 2 - 1;
