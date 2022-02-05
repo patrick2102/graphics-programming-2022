@@ -185,7 +185,7 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
 
     std::vector<float> vboVec;
 
-    float numOfTriangles = 4;
+    float numOfTriangles = 16*16*16*16;
 
     vboVec.insert(vboVec.end(), {0.0f, 0.0f, 0.0f});
     vboVec.insert(vboVec.end(), {1.0f, 1.0f, 1.0f});
@@ -200,7 +200,6 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
         vboVec.insert(vboVec.end(), {px, py, 0.0f});
         vboVec.insert(vboVec.end(), {px, py, 1.0f});
 
-
         vboIndices.insert(vboIndices.end(), 0);
         vboIndices.insert(vboIndices.end(), currIndex+2);
         vboIndices.insert(vboIndices.end(), currIndex+4);
@@ -213,7 +212,6 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
 
     vboVec.insert(vboVec.end(), {px, py, 0.0f});
     vboVec.insert(vboVec.end(), {1.0f, 1.0f, 1.0f});
-
 
     vboIndices.insert(vboIndices.end(), 0);
     vboIndices.insert(vboIndices.end(), currIndex+2);
