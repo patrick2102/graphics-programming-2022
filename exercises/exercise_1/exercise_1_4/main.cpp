@@ -183,10 +183,10 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     std::vector<float> posVec;
     std::vector<float> colVec;
 
-    float numOfTriangles = 3;
+    float numOfTriangles = 16 * 16 * 16 * 16;
 
     for(int i = 0; i < (int)numOfTriangles; i++){
-        std::cout << "triangle: "  << i << std::endl;
+        //std::cout << "triangle: "  << i << std::endl;
 
         float p1x = cos(((float)i/numOfTriangles)*3.1415f*2)/2;
         float p1y = sin(((float)i/numOfTriangles)*3.1415f*2)/2;
@@ -194,11 +194,11 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
         float p2x = cos(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
         float p2y = sin(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
 
-        std::cout << std::endl;
+        //std::cout << std::endl;
 
         posVec.insert(posVec.end(), {0.0f, 0.0f, 0.0f, p1x, p1y, 0.0f, p2x, p2y, 0.0f});
 
-        colVec.insert(colVec.end(), {0.75f, 0.75f, 0.75f, p1y, p1x, 0.25f,  });
+        colVec.insert(colVec.end(), {0.75f, 0.75f, 0.75f, p1y, p1x, 0.25f,  p2x, p2y, 0.25f});
     }
 
     createArrayBuffer((posVec), posVBO);
