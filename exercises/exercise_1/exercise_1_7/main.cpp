@@ -170,7 +170,7 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
 
     std::vector<float> vboVec;
 
-    float numOfTriangles = 16;
+    float numOfTriangles = 16 * 16 * 16;
 
     for(int i = 0; i < (int)numOfTriangles; i++){
 
