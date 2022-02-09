@@ -94,10 +94,18 @@ int main()
         // render the cones
         glUseProgram(activeShader->ID);
 
-        // TODO exercise 2.3
         // Iterate through the scene objects, for each object:
         // - bind the VAO; set the uniform variables; and draw.
-        // CODE HERE
+        for(auto sc : sceneObjects){
+            glBindVertexArray(sc.VAO);
+
+            int locationPos = glGetUniformLocation(activeShader->ID, "uPos");
+            int locationCol = glGetUniformLocation(activeShader->ID, "cCol");
+            glUniform2f(locationPos, sc.x, sc.y);
+            glUniform3f(locationCol, sc.r, sc.g, sc.b);
+
+            glDrawArrays(GL_TRIANGLES, 0, sc.vertexCount);
+        }
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -113,26 +121,56 @@ int main()
 
 // creates a cone triangle mesh, uploads it to openGL and returns the VAO associated to the mesh
 SceneObject instantiateCone(float r, float g, float b, float offsetX, float offsetY){
-    // TODO exercise 2.1
-    // (exercises 1.7 and 1.8 can help you with implementing this function)
+    //TODO solved using 1.7, maybe do it with 1.8 later
 
     // Create an instance of a SceneObject,
     SceneObject sceneObject{};
 
     // you will need to store offsetX, offsetY, r, g and b in the object.
-    // CODE HERE
+    sceneObject.x = offsetX;
+    sceneObject.y = offsetY;
+    sceneObject.r = r;
+    sceneObject.g = g;
+    sceneObject.b = b;
+
     // Build the geometry into an std::vector<float> or float array.
-    // CODE HERE
+    std::vector<float> vboVec;
+    float numOfTriangles = 16;
+
+    for(int i = 0; i < (int)numOfTriangles; i++){
+        float p1x = cos(((float)i/numOfTriangles)*3.1415f*2)/2;
+        float p1y = sin(((float)i/numOfTriangles)*3.1415f*2)/2;
+
+
+        float p2x = cos(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
+        float p2y = sin(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
+
+        vboVec.insert(vboVec.end(), {0.0f, 0.0f, 1.0f});
+        vboVec.insert(vboVec.end(), {p1x, p1y, 0.0f});
+        vboVec.insert(vboVec.end(), {p2x, p2y, 0.0f});
+    }
+
     // Store the number of vertices in the mesh in the scene object.
-    // CODE HERE
+    sceneObject.vertexCount = (int)numOfTriangles * 3;
+
     // Declare and generate a VAO and VBO (and an EBO if you decide the work with indices).
-    // CODE HERE
+    unsigned int VAO, VBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
     // Bind and set the VAO and VBO (and optionally a EBO) in the correct order.
-    // CODE HERE
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vboVec.size() * sizeof(GLfloat), &vboVec[0], GL_STATIC_DRAW);
+
     // Set the position attribute pointers in the shader.
-    // CODE HERE
+    int posSize = 3;
+    int posAttributeLocation = 0;
+    glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posAttributeLocation);
+
     // Store the VAO handle in the scene object.
-    // CODE HERE
+    sceneObject.VAO = VAO;
 
     // 'return' the scene object for the cone instance you just created.
     return sceneObject;
@@ -140,7 +178,6 @@ SceneObject instantiateCone(float r, float g, float b, float offsetX, float offs
 
 // glfw: called whenever a mouse button is pressed
 void button_input_callback(GLFWwindow* window, int button, int action, int mods){
-    // TODO exercise 2.2
     // (exercises 1.9 and 2.2 can help you with implementing this function)
 
     // Test button press, see documentation at:
@@ -151,7 +188,24 @@ void button_input_callback(GLFWwindow* window, int button, int action, int mods)
     // - The click position should be transformed from screen coordinates to normalized device coordinates,
     //   to obtain the offset values that describe the position of the object in the screen plane.
     // - A random value in the range [0, 1] should be used for the r, g and b variables.
-    // CODE HERE
+
+    if(button == 0){
+        double r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+        double g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+        double b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+        double xPos;
+        double yPos;
+        glfwGetCursorPos(window, &xPos, &yPos);
+
+        double xndc = xPos/SCR_WIDTH * 2 - 1;
+        double yndc = yPos/SCR_HEIGHT * -2 + 1;
+
+        auto cone = instantiateCone(r, g, b, xndc, yndc);
+
+        sceneObjects.push_back(cone);
+    }
+
 }
 
 // glfw: called whenever a keyboard key is pressed
