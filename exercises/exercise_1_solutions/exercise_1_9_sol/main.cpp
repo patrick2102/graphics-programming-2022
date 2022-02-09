@@ -9,7 +9,7 @@
 // function declarations
 // ---------------------
 void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO);
-void setupShape(unsigned int shaderProgram, unsigned int &VAO, unsigned int &vertexCount);
+void setupShape(const unsigned int shaderProgram, unsigned int &posVBO, unsigned int &VAO, unsigned int &vertexCount);
 void draw(unsigned int shaderProgram, unsigned int VAO, unsigned int vertexCount);
 
 
@@ -25,24 +25,27 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
 
 
+// variable to store the list of points
+// ------------------------------------
+std::vector<float> points;
+
+
 // shader programs
 // ---------------
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
-                                 "layout (location = 1) in vec3 aColor;\n"
-                                 "out vec3 vtxColor; // output a color to the fragment shader\n"
                                  "void main()\n"
                                  "{\n"
                                  "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-                                 "   vtxColor = aColor;\n"
+                                 "   gl_PointSize = 5.0;\n" // set the size of the point
                                  "}\0";
 const char *fragmentShaderSource = "#version 330 core\n"
                                    "out vec4 FragColor;\n"
-                                   "in  vec3 vtxColor;\n"
                                    "void main()\n"
                                    "{\n"
-                                   "   FragColor = vec4(vtxColor, 1.0);\n"
+                                   "   FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n" // hardcoded white color
                                    "}\n\0";
+
 
 
 
@@ -129,18 +132,23 @@ int main()
 
     // setup vertex array object (VAO)
     // -------------------------------
-    unsigned int VAO, vertexCount;
+    unsigned int VBO=0, VAO=0, vertexCount;
     // generate geometry in a vertex array object (VAO), record the number of vertices in the mesh,
     // tells the shader how to read it
-    setupShape(shaderProgram, VAO, vertexCount);
+    setupShape(shaderProgram, VBO, VAO, vertexCount);
 
+
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window)) {
         // input
         // -----
+        int points_count = points.size();
         processInput(window);
+        if (points_count != points.size()) // updating our buffers is costly, let's only do that when a new point is added
+            setupShape(shaderProgram, VBO, VAO, vertexCount);
 
         // render
         // ------
@@ -162,65 +170,48 @@ int main()
 }
 
 
-// create the geometry, a vertex array object representing it, and set how a shader program should read it
-// -------------------------------------------------------------------------------------------------------
-void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int &vertexCount){
+// create a vertex buffer object (VBO) from an array of values, return VBO handle (set as reference)
+// -------------------------------------------------------------------------------------------------
+void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO){
+    // create the VBO on OpenGL and get a handle to it (if it doesn't exists already)
+    if (VBO == 0)
+        glGenBuffers(1, &VBO);
 
-    unsigned int VBO;
-
-    std::vector<float> vboVec;
-
-    float numOfTriangles = 16 * 16 * 16;
-
-    for(int i = 0; i < (int)numOfTriangles; i++){
-
-        vboVec.insert(vboVec.end(), {0.0f, 0.0f, 0.0f});
-        vboVec.insert(vboVec.end(), {1.0f, 1.0f, 1.0f});
-
-        float p1x = cos(((float)i/numOfTriangles)*3.1415f*2)/2;
-        float p1y = sin(((float)i/numOfTriangles)*3.1415f*2)/2;
-
-        vboVec.insert(vboVec.end(), {p1x, p1y, 0.0f});
-        vboVec.insert(vboVec.end(), {p1y, p1x, 0.0f});
-
-        float p2x = cos(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
-        float p2y = sin(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
-
-        vboVec.insert(vboVec.end(), {p2x, p2y, 0.0f});
-        vboVec.insert(vboVec.end(), {p2y, p2x, 0.0f});
-    }
-
-    // tell how many vertices to draw
-    vertexCount = (int) numOfTriangles * 3;
-
-    // create a vertex array object (VAO) on OpenGL and save a handle to it
-    glGenVertexArrays(1, &VAO);
-    // bind vertex array object
-    glBindVertexArray(VAO);
-
-    // create the VBO on OpenGL and get a handle to it
-    glGenBuffers(1, &VBO);
     // bind the VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // set the content of the VBO (type, size, pointer to start, and how it is used)
-    glBufferData(GL_ARRAY_BUFFER, vboVec.size() * sizeof(GLfloat), &vboVec[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, array.size() * sizeof(GLfloat), &array[0], GL_STATIC_DRAW);
+}
 
-    int stride = 6 * sizeof(GLfloat);
+
+// create the geometry, a vertex array object representing it, and set how a shader program should read it
+// -------------------------------------------------------------------------------------------------------
+void setupShape(const unsigned int shaderProgram, unsigned int &posVBO, unsigned int &VAO, unsigned int &vertexCount){
+
+    createArrayBuffer(points, posVBO);
+
+    // tell how many vertices to draw
+    vertexCount = points.size() / 3;
+
+    // create a vertex array object (VAO) on OpenGL and store a handle to it
+    if (VAO == 0)
+        glGenVertexArrays(1, &VAO);
+
+    // bind vertex array object
+    glBindVertexArray(VAO);
+
+    // associate VBO to vertex shader attribute "aPos"
+    glBindBuffer(GL_ARRAY_BUFFER, posVBO);
 
     int posSize = 3;
     int posAttributeLocation = glGetAttribLocation(shaderProgram, "aPos");
 
-    glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, stride, 0);
     glEnableVertexAttribArray(posAttributeLocation);
+    glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, 0, 0);
 
-
-    int colorSize = 3;
-    int colorAttributeLocation = glGetAttribLocation(shaderProgram, "aColor");
-
-    glEnableVertexAttribArray(colorAttributeLocation);
-    glVertexAttribPointer(colorAttributeLocation, colorSize, GL_FLOAT, GL_FALSE, stride, (void*) (3 * sizeof(float)));
+    // unbind our VAO, won't make any difference in this application (just for good practice)
+    glBindVertexArray(0);
 }
-
 
 // tell opengl to draw a vertex array object (VAO) using a give shaderProgram
 // --------------------------------------------------------------------------
@@ -228,9 +219,9 @@ void draw(const unsigned int shaderProgram, const unsigned int VAO, const unsign
     // set active shader program
     glUseProgram(shaderProgram);
     // bind vertex array object
-    //glBindVertexArray(VAO);
+    glBindVertexArray(VAO);
     // draw geometry
-    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    glDrawArrays(GL_POINTS, 0, vertexCount);
 }
 
 
@@ -240,8 +231,25 @@ void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-}
 
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        // get screen size and click coordinates from our window manager (glfw)
+        double xPos, yPos;
+        int xScreen, yScreen;
+        glfwGetCursorPos(window, &xPos, &yPos);
+        glfwGetWindowSize(window, &xScreen, &yScreen);
+
+        // convert from screen space to normalized display coordinates (NDC)
+        float xNdc = (float) xPos/(float) xScreen * 2.0f -1.0f;
+        float yNdc = (float) yPos/(float) yScreen * 2.0f -1.0f;
+        yNdc = -yNdc; // mind that the NDC y-coord points up, while the scree/window y-coord points down
+
+        // add a point at the mouse position
+        points.push_back(xNdc);
+        points.push_back(yNdc);
+        points.push_back(0.0f);
+    }
+}
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------

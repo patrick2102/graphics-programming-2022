@@ -9,9 +9,9 @@
 // function declarations
 // ---------------------
 void createArrayBuffer(const std::vector<float> &array, unsigned int &VBO);
-void setupShape(unsigned int shaderProgram, unsigned int &VAO, unsigned int &vertexCount, unsigned int &posVBO, unsigned int &colVBO);
+void setupShape(unsigned int shaderProgram, unsigned int &VAO, unsigned int &, unsigned int &posVBO, unsigned int &colVBO);
 void draw(unsigned int shaderProgram, unsigned int VAO, unsigned int vertexCount);
-void rotate(unsigned int shaderProgram, unsigned int &VAO, float inc, unsigned int &posVBO);
+void rotate(unsigned int shaderProgram, unsigned int &VAO, float inc, unsigned int &posVBO, unsigned int &colVBO);
 
 
 // glfw functions
@@ -151,7 +151,7 @@ int main()
 
         draw(shaderProgram, VAO, vertexCount);
 
-        rotate(shaderProgram, VAO, inc, posVBO);
+        rotate(shaderProgram, VAO, inc, posVBO, colVBO);
 
         inc -= 0.01f;
 
@@ -203,7 +203,7 @@ void setupShape(const unsigned int shaderProgram, unsigned int &VAO, unsigned in
 
         posVec.insert(posVec.end(), {0.0f, 0.0f, 0.0f, p1x, p1y, 0.0f, p2x, p2y, 0.0f});
 
-        colVec.insert(colVec.end(), {0.75f, 0.75f, 0.75f, p1y, p1x, 0.25f,  p2x, p2y, 0.25f});
+        colVec.insert(colVec.end(), {0.0f, 0.0f, 0.0f, p1x, p1y, 0.0f, p2x, p2y, 0.0f});
     }
 
     createArrayBuffer(posVec, posVBO);
@@ -238,9 +238,11 @@ void setupShape(const unsigned int shaderProgram, unsigned int &VAO, unsigned in
 
 }
 
-void rotate(const unsigned int shaderProgram, unsigned int &VAO, float inc, unsigned int &posVBO)
+void rotate(const unsigned int shaderProgram, unsigned int &VAO, float inc, unsigned int &posVBO, unsigned int &colVBO)
 {
+    //unsigned int posVBO, colVBO;
     std::vector<float> posVec;
+    //std::vector<float> colVec;
 
     float numOfTriangles = 16;
 
@@ -252,10 +254,14 @@ void rotate(const unsigned int shaderProgram, unsigned int &VAO, float inc, unsi
         float p2y = sin((((float)i + inc + 1)/numOfTriangles)*3.1415f*2)/2;
 
         posVec.insert(posVec.end(), {0.0f, 0.0f, 0.0f, p1x, p1y, 0.0f, p2x, p2y, 0.0f});
+        //colVec.insert(colVec.end(), {0.75f, 0.75f, 0.75f, p1y, p1x, 0.25f,  p2x, p2y, 0.25f});
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, posVBO);
     glBufferData(GL_ARRAY_BUFFER, posVec.size() * sizeof(GLfloat), &posVec[0], GL_DYNAMIC_DRAW);
+
+    //glBindBuffer(GL_ARRAY_BUFFER, colVBO);
+    //glBufferData(GL_ARRAY_BUFFER, colVec.size() * sizeof(GLfloat), &colVec[0], GL_DYNAMIC_DRAW);
 
     // bind vertex array object
     glBindVertexArray(VAO);
@@ -268,6 +274,15 @@ void rotate(const unsigned int shaderProgram, unsigned int &VAO, float inc, unsi
 
     glEnableVertexAttribArray(posAttributeLocation);
     glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, 0, 0);
+
+    // set vertex shader attribute "aColor"
+    //glBindBuffer(GL_ARRAY_BUFFER, colVBO);
+
+    //int colorSize = 3;
+    //int colorAttributeLocation = glGetAttribLocation(shaderProgram, "aColor");
+
+    //glEnableVertexAttribArray(colorAttributeLocation);
+    //glVertexAttribPointer(colorAttributeLocation, colorSize, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 
