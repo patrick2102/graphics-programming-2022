@@ -175,23 +175,23 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     for(int i = 0; i < (int)numOfTriangles; i++){
 
         vboVec.insert(vboVec.end(), {0.0f, 0.0f, 0.0f});
-        vboVec.insert(vboVec.end(), {0.75f, 0.75f, 0.75f});
+        vboVec.insert(vboVec.end(), {1.0f, 1.0f, 1.0f});
 
         float p1x = cos(((float)i/numOfTriangles)*3.1415f*2)/2;
         float p1y = sin(((float)i/numOfTriangles)*3.1415f*2)/2;
 
         vboVec.insert(vboVec.end(), {p1x, p1y, 0.0f});
-        vboVec.insert(vboVec.end(), {p1y, p1x, 0.25f});
+        vboVec.insert(vboVec.end(), {p1y, p1x, 0.0f});
 
         float p2x = cos(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
         float p2y = sin(((float)(i+1)/numOfTriangles)*3.1415f*2)/2;
 
         vboVec.insert(vboVec.end(), {p2x, p2y, 0.0f});
-        vboVec.insert(vboVec.end(), {p2y, p2x, 0.25f});
+        vboVec.insert(vboVec.end(), {p2y, p2x, 0.0f});
     }
 
     // tell how many vertices to draw
-    vertexCount = 3 * (int)numOfTriangles;
+    vertexCount = (int) numOfTriangles * 3;
 
     // create a vertex array object (VAO) on OpenGL and save a handle to it
     glGenVertexArrays(1, &VAO);
@@ -205,13 +205,14 @@ void setupShape(const unsigned int shaderProgram,unsigned int &VAO, unsigned int
     // set the content of the VBO (type, size, pointer to start, and how it is used)
     glBufferData(GL_ARRAY_BUFFER, vboVec.size() * sizeof(GLfloat), &vboVec[0], GL_STATIC_DRAW);
 
-    int stride = 6 * sizeof(float);
+    int stride = 6 * sizeof(GLfloat);
 
     int posSize = 3;
     int posAttributeLocation = glGetAttribLocation(shaderProgram, "aPos");
 
     glVertexAttribPointer(posAttributeLocation, posSize, GL_FLOAT, GL_FALSE, stride, 0);
     glEnableVertexAttribArray(posAttributeLocation);
+
 
     int colorSize = 3;
     int colorAttributeLocation = glGetAttribLocation(shaderProgram, "aColor");
