@@ -100,7 +100,7 @@ int main()
             glBindVertexArray(sc.VAO);
 
             int locationPos = glGetUniformLocation(activeShader->ID, "uPos");
-            int locationCol = glGetUniformLocation(activeShader->ID, "cCol");
+            int locationCol = glGetUniformLocation(activeShader->ID, "uCol");
             glUniform2f(locationPos, sc.x, sc.y);
             glUniform3f(locationCol, sc.r, sc.g, sc.b);
 
