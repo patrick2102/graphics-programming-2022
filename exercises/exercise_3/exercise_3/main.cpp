@@ -196,7 +196,7 @@ void drawPlane(){
     trans = glm::scale(trans, glm::vec3(0.1f, 0.1f, 0.1f));
     trans = glm::rotate(trans, glm::radians(tiltAngle),glm::vec3(0.0f, 1.0f, 0.0f));
 
-    //glm::vec4 planeBodyMatrix =  trans;
+    glm::mat4 planeBodyMatrix =  trans;
 
     unsigned int transformLoc = glGetUniformLocation(shaderProgram->ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
@@ -208,40 +208,33 @@ void drawPlane(){
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
     drawSceneObject(planeWing);
 
+    // left wing
+    trans = planeBodyMatrix;
+    trans = glm::scale(trans, glm::vec3(-1.0f, 1.0f, 1.0f));
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+    drawSceneObject(planeWing);
+
     // right tail fin
-    trans = model;
-    trans = glm::scale(trans, glm::vec3(0.1f, 0.1f, 0.1f));
+    trans = planeBodyMatrix;
     trans = glm::translate(trans, glm::vec3(0.0f, -0.5f, 0.0f));
     trans = glm::scale(trans, glm::vec3(0.5f, 1.0f, 1.0f));
-    trans = glm::rotate(trans, glm::radians(tiltAngle),glm::vec3(0.0f, 1.0f, 0.0f));
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
     drawSceneObject(planeWing);
 
-    // left wing
-    trans = model;
-    trans = glm::scale(trans, glm::vec3(0.1f, 0.1f, 0.1f));
-    trans = glm::scale(trans, glm::vec3(-1.0f, 1.0f, 1.0f));
-    trans = glm::rotate(trans, glm::radians(tiltAngle),glm::vec3(0.0f, 1.0f, 0.0f));
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-    drawSceneObject(planeWing);
 
     // left tail fin
-    trans = model;
-    trans = glm::scale(trans, glm::vec3(0.1f, 0.1f, 0.1f));
+    trans = planeBodyMatrix;
     trans = glm::translate(trans, glm::vec3(0.0f, -0.5f, 0.0f));
     trans = glm::scale(trans, glm::vec3(-0.5f, 1.0f, 1.0f));
-    trans = glm::rotate(trans, glm::radians(tiltAngle),glm::vec3(0.0f, 1.0f, 0.0f));
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
     drawSceneObject(planeWing);
 
     // propeller
-    trans = model;
-    trans = glm::scale(trans, glm::vec3(0.1f, 0.1f, 0.1f));
+    trans = planeBodyMatrix;
     trans = glm::translate(trans, glm::vec3(0.0f, 0.5f, 0.0f));
     trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
     trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-    trans = glm::rotate(trans, glm::radians(tiltAngle),glm::vec3(0.0f, 0.0f, 1.0f));
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
     drawSceneObject(planePropeller);
 
