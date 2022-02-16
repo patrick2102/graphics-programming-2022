@@ -157,7 +157,7 @@ void drawPlane(){
     //  you will need to transform the pose of the pieces of the plane by manipulating glm matrices and uploading a
     //  uniform mat4 transform matrix to the vertex shader
 
-
+    //Make the plane wrap around:
     if(planePosition.x > 1.1f)
         planePosition.x = -1.1f;
     else if(planePosition.x < -1.1f)
@@ -167,9 +167,7 @@ void drawPlane(){
     else if(planePosition.y < -1.1f)
         planePosition.y = 1.0f;
 
-    std::cout << planePosition << std::endl;
 
-    glm::mat4 model = glm::mat4(1.0f);
     float forwardX = -sin(glm::radians(planeRotation));
     float forwardY = cos(glm::radians(planeRotation));
 
@@ -179,25 +177,32 @@ void drawPlane(){
 
     planePosition = planePosition + planeMovement;
 
-    model = glm::translate(model, glm::vec3(planePosition.x, planePosition.y, 0));
-    model = glm::rotate(model, glm::radians(planeRotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
+    //Defining perspective:
     glm::vec3 camPos = glm::vec3(0, 0, 2);
+    //We are look at the plane from the bottom. If we set z = -2, then we get the top perspective again, however this requires
+    //changing the direction of rotation to make controlling the plane work properly again.
+
+
     glm::vec3 targetPos = glm::vec3(0, 0, 0);
     glm::vec3 up = glm::vec3(0, 1, 0);
 
     glm::mat4 lookAt = glm::lookAt(camPos, targetPos, up);
-
     glm::mat4 projection = glm::perspective(1.0f, ((float)SCR_WIDTH/(float)SCR_HEIGHT), 0.1f, 10.0f);
 
-    //model = projection * lookAt * model;
+    //Creating model matrix:
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(planePosition.x, planePosition.y, 0));
+    model = glm::rotate(model, glm::radians(planeRotation), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    //Multiplying projection, model and view to create perspective
+    model = projection * lookAt * model;
 
     glm::mat4 trans = model;
     trans = glm::scale(trans, glm::vec3(0.1f, 0.1f, 0.1f));
     trans = glm::rotate(trans, glm::radians(tiltAngle),glm::vec3(0.0f, 1.0f, 0.0f));
 
     glm::mat4 planeBodyMatrix =  trans;
-
     unsigned int transformLoc = glGetUniformLocation(shaderProgram->ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
@@ -318,7 +323,6 @@ void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    // TODO 3.4 control the plane (turn left and right) using the A and D keys
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
@@ -335,13 +339,6 @@ void processInput(GLFWwindow *window)
     } else {
         tiltAngle = 0.0f;
     }
-
-    std::cout << planeRotation << std::endl;
-
-    // you will need to read A and D key press inputs
-    // if GLFW_KEY_A is GLFW_PRESS, plane turn left
-    // if GLFW_KEY_D is GLFW_PRESS, plane turn right
-
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
