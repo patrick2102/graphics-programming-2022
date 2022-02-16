@@ -16,6 +16,8 @@ void main()
     // Make sure that the z-coordinate is in the [0, 1] range (if it is not, place it in that range),
     // you can use non-linear transformations of the z-coordinate, such as the 'pow' or 'sqrt' functions,
     // to make the colors brighter close to the center of the cone.
-    //fragColor = vec4(zCoords - uCol.x, zCoords - uCol.y, zCoords - uCol.z, 1.0);
-    fragColor = vec4(uCol.x - zCoords, uCol.y - zCoords, uCol.z - zCoords, 1.0);
+    //fragColor = vec4(zCoords - sqrt(uCol.x), zCoords - sqrt(uCol.y), zCoords - sqrt(uCol.z), 1.0);
+    //fragColor = vec4(uCol.x - zCoords, uCol.y - zCoords, uCol.z - zCoords, 1.0);
+    float dist = 1-pow(zCoords);
+    fragColor = vec4(uCol.x - dist, uCol.y - dist, uCol.z - dist, 1.0);
 }

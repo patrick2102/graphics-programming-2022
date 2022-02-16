@@ -76,14 +76,14 @@ int main() {
     // NEW!
     // set up the z-buffer
     glDepthRange(1, -1); // make the NDC a right handed coordinate system, with the camera pointing towards -z
-    //glEnable(GL_DEPTH_TEST); // turn on z-buffer depth test
+    glEnable(GL_DEPTH_TEST); // turn on z-buffer depth test
     glDepthFunc(GL_LESS); // draws fragments that are closer to the screen in NDC
 
     // TODO exercise 2.6
     // enable blending
-    glEnable(GL_BLEND);
+    //glEnable(GL_BLEND);
     // choose the right blending factors to produce additive blending
-    glBlendFunc(GL_ONE, GL_ONE);
+    //glBlendFunc(GL_ONE, GL_ONE);
 
 
     // render loop
