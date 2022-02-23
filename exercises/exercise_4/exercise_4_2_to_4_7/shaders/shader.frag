@@ -1,16 +1,25 @@
 #version 330 core
 
-out vec4 fragColor;
+in float age;
 
-// TODO 4.6: should receive the age of the particle as an input variable
+out vec4 fragColor;
 
 void main()
 {
-    // TODO 4.4 set the alpha value to 0.2 (alpha is the 4th value of the output color)
-
-    // TODO 4.5 and 4.6: improve the particles appearance
-
     // remember to replace the default output (vec4(1.0,1.0,1.0,1.0)) with the color and alpha values that you have computed
-    fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    vec2 pc = gl_PointCoord;
+    float alpha = 1 - smoothstep(0.0, 1.0, ((distance(vec2(0.5,0.5), pc))/distance(vec2(0.5,0.5), vec2(0.5, 0.0))));
 
+    float red = 1.0;
+    float green = mix(1.0, 0.5, (age/10.0));
+    float blue = mix(0.05, 0.01, (age/10.0));
+
+    if(age > 10.0)
+    {
+        red = 0.0f;
+        green = 0.0f;
+        blue = 0.0f;
+    }
+
+    fragColor = vec4(red, green, blue, pow(alpha, 2.0));
 }
