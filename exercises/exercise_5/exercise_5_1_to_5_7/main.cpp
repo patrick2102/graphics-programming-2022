@@ -246,6 +246,23 @@ void setLightUniforms()
 {
     // TODO exercise 5 - set the missing uniform variables here
     // light uniforms
+    int ambientLightIntensityLocation = glGetUniformLocation(shader->ID, "ambientLightIntensity");
+    glUniform1f(ambientLightIntensityLocation, config.ambientLightIntensity);
+
+    int light1IntensityLocation = glGetUniformLocation(shader->ID, "light1Intensity");
+    int light1PositionLocation = glGetUniformLocation(shader->ID, "light1Position");
+    int light1ColorLocation = glGetUniformLocation(shader->ID, "light1Color");
+    glUniform1f(light1IntensityLocation, config.light1Intensity);
+    glUniform3f(light1PositionLocation, config.light1Position.r, config.light1Position.g, config.light1Position.b);
+    glUniform3f(light1ColorLocation, config.light1Color.r, config.light1Color.g, config.light1Color.b);
+
+
+    int light2IntensityLocation = glGetUniformLocation(shader->ID, "light2Intensity");
+    int light2PositionLocation = glGetUniformLocation(shader->ID, "light2Position");
+    int light2ColorLocation = glGetUniformLocation(shader->ID, "light2Color");
+    glUniform1f(light2IntensityLocation, config.light2Intensity);
+    glUniform3f(light2PositionLocation, config.light2Position.r, config.light2Position.g, config.light2Position.b);
+    glUniform3f(light2ColorLocation, config.light2Color.r, config.light2Color.g, config.light2Color.b);
 }
 
 
@@ -256,9 +273,19 @@ void drawObjects(){
 
     // TODO exercise 5 - set the missing uniform variables here
     // material uniforms
+    int ambientReflectanceLocation = glGetUniformLocation(shader->ID, "ambientReflectance");
+    int reflectionColorLocation = glGetUniformLocation(shader->ID, "reflectionColor");
+    glUniform1f(ambientReflectanceLocation, config.ambientReflectance);
+    glUniform3f(reflectionColorLocation, config.reflectionColor.r, config.reflectionColor.g, config.reflectionColor.b);
 
 
+    int diffuseReflectanceLocation = glGetUniformLocation(shader->ID, "diffuseReflectance");
+    glUniform1f(diffuseReflectanceLocation, config.diffuseReflectance);
 
+    int specularReflectanceLocation = glGetUniformLocation(shader->ID, "specularReflectance");
+    int specularExponentLocation = glGetUniformLocation(shader->ID, "specularExponent");
+    glUniform1f(specularReflectanceLocation, config.specularReflectance);
+    glUniform1f(specularExponentLocation, config.specularExponent);
 
     // the typical transformation uniforms are already set for you, these are:
     // projection (perspective projection matrix)

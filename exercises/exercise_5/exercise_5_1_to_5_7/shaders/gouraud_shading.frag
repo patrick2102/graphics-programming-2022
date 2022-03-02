@@ -1,6 +1,7 @@
 #version 330 core
 
 in vec4 shadedColor;
+
 out vec4 FragColor;
 
 void main()

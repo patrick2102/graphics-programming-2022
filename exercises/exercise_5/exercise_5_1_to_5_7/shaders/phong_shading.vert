@@ -8,7 +8,8 @@ uniform mat4 viewProjection;  // represents the view and projection matrices com
 
 // TODO exercise 5.4 - make the 'out' variables that will be used in the fragment shader
 
-
+out vec3 position;
+out vec3 newNormal;
 
 void main() {
    // vertex in world space (for lighting computation)
@@ -18,7 +19,8 @@ void main() {
 
    // TODO 5.4 pass the positions in world space to the fragment shader
 
-
+   position = P.xyz;
+   newNormal = N;
 
    // final vertex position (for opengl rendering, not for lighting)
    gl_Position = viewProjection * P;
