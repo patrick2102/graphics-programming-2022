@@ -72,10 +72,10 @@ void main()
 
 
    // Debug output for view space position
-   FragColor = P;
+   //FragColor = P;
 
    // TODO 7.3 Output albedo to fragment color
-   //FragColor = vec4(albedo, 1.0f);
+   FragColor = vec4(albedo, 1.0f);
 
    // TODO 7.4 Output normal to fragment color
    //FragColor = vec4(normal, 1.0f);
