@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Cow
-  m_Shader: {fileID: 4800000, guid: b6002cff188bed246a13de5a1bb1a86f, type: 3}
+  m_Name: CelShading
+  m_Shader: {fileID: 4800000, guid: 453d0a502021c644684702d483a5cfff, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _AlbedoTexture:
-        m_Texture: {fileID: 2800000, guid: e7b8dd87fa23f584aaadd5e78c416479, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -41,6 +41,30 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Hatching0:
+        m_Texture: {fileID: 2800000, guid: 4f2c1630d159d5041abed235d2b9408a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Hatching1:
+        m_Texture: {fileID: 2800000, guid: fb4aa34aaafcd5b4da5a2cc373490249, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Hatching2:
+        m_Texture: {fileID: 2800000, guid: a9a1c7d8faa4a3b4998ca11708ca593d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Hatching3:
+        m_Texture: {fileID: 2800000, guid: 78d5c4c3f74311c4aa6cee57bde5f6f4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Hatching4:
+        m_Texture: {fileID: 2800000, guid: 8c6fba2c1fe6adc4985bfec38c4bbaec, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Hatching5:
+        m_Texture: {fileID: 2800000, guid: 89e07135195a26c4e9921c262c421167, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -73,7 +97,6 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
-    - _Spe2cularExponent: 120
     - _SpecularExponent: 100
     - _SpecularHighlights: 1
     - _SrcBlend: 1

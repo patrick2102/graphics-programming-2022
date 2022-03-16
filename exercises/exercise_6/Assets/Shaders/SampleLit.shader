@@ -80,6 +80,7 @@ Shader "CG2022/SampleLit"
 
             ENDGLSL
         }
+
         Pass
         {
             Name "FORWARD"
@@ -131,6 +132,7 @@ Shader "CG2022/SampleLit"
             #endif // FRAGMENT
 
             ENDGLSL
+            //Cull Off
         }
         // ShadowCaster pass. This will be the shader executed to generate a shadow map.
         Pass

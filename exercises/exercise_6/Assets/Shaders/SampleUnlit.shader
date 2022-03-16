@@ -4,7 +4,7 @@ Shader "CG2022/SampleUnlit"
     Properties
     {
         // Texture 2D property: If none is specified, it will use a white texture
-        _MainTex ("Texture", 2D) = "white" {}
+        _MainTex ("Texture", 2D) = "red" {}
     }
 
     // Each Shader can have several subshaders, to use depending on the platform and quality settings
