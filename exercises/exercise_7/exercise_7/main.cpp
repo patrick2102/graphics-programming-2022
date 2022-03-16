@@ -289,6 +289,9 @@ int main()
                 // Disable depth write
                 glDepthMask(false);
 
+                // Disable depth test
+                glDisable(GL_DEPTH_TEST);
+
                 // render additional lights
                 for (int i = 1; i < config.lights.size(); ++i)
                 {
@@ -306,6 +309,7 @@ int main()
                 glCullFace(GL_BACK);
                 glDisable(GL_CULL_FACE);
                 glDepthMask(true);
+                glEnable(GL_DEPTH_TEST);
 
                 shader = deferred_shading;
             }
