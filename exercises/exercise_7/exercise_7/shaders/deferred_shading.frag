@@ -21,7 +21,7 @@ uniform sampler2D textureAlbedo;
 in vec2 textCoordOut;
 
 // TODO 7.4 : Add an 'in' variable for view normal
-
+in vec3 viewNormal;
 
 
 // output colors of this fragment
@@ -41,13 +41,15 @@ void main()
    AlbedoGBuffer = albedo;
 
    // TODO 7.4 : Get the normal from the vertex shader and normalize it
-   vec3 normal = vec3(1.0f);
+   //vec3 normal = vec3(1.0f);
+   vec3 normal = normalize(viewNormal);
 
    // Output normal to GBuffer (only 2 components)
    NormalGBuffer = normal.xy;
 
    // TODO 7.5 : Pack the remaining data - Remember values must be normalized in range [0, 1]
-   vec4 others = vec4(1.0f);
+   //vec4 others = vec4(1.0f);
+   vec4 others = vec4(ambientReflectance, diffuseReflectance, specularReflectance, specularExponent/100.0);
 
    // Output others to GBuffer
    OthersGBuffer = others;

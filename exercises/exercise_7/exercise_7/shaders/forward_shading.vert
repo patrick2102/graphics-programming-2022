@@ -10,6 +10,7 @@ out vec4 worldPos;
 out vec3 worldNormal;
 
 // TODO 7.3 : Add an 'out' variable for texture coordinates
+out vec2 textCoordOut;
 
 void main() {
    // vertex in world space (for lighting computation)
@@ -22,6 +23,7 @@ void main() {
    worldNormal = N;
 
    // TODO 7.3 : Read the texture coordinates from the attribute and pass it to fragment
+   textCoordOut = textCoord;
 
    // final vertex position (for opengl rendering, not for lighting)
    gl_Position = viewProjection * P;

@@ -401,9 +401,6 @@ void drawGui(){
         ImGui::Separator();
 
 
-
-
-
         ImGui::Text("Material: ");
         ImGui::ColorEdit3("reflection color", (float*)&config.reflectionColor);
         ImGui::SliderFloat("ambient reflectance", &config.ambientReflectance, 0.0f, 1.0f);

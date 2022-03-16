@@ -17,13 +17,15 @@ uniform float specularReflectance;
 uniform float specularExponent;
 
 // material textures
-// TODO 7.3 : Add a sampler2D uniform for the albedo texture. Name must be 'textureAlbedo' 
+// TODO 7.3 : Add a sampler2D uniform for the albedo texture. Name must be 'textureAlbedo'
+uniform sampler2D textureAlbedo;
 
 // 'in' variables to receive the interpolated Position and Normal from the vertex shader
 in vec4 worldPos;
 in vec3 worldNormal;
 
 // TODO 7.3 : Add an 'in' variable for texture coordinates
+in vec2 textCoordOut;
 
 void main()
 {
@@ -31,7 +33,8 @@ void main()
    vec3 N = normalize(worldNormal);
 
    // TODO 7.3 : Sample your albedo texture using the texture coordinates from vertex shader
-   vec3 albedo = vec3(1.0f); // Replace this with the texture sample
+   //vec3 albedo = vec3(1.0f); // Replace this with the texture sample
+   vec3 albedo = texture(textureAlbedo, textCoordOut).xyz * reflectionColor;
    albedo *= reflectionColor;
 
    // phong shading (i.e. Phong reflection model computed in the fragment shader)
