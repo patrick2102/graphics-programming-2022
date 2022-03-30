@@ -8,9 +8,11 @@ uniform sampler2D SourceTexture;
 
 
 //TODO 9.1 and 9.2 : Add uniforms here
-
-
-
+uniform float exposure;
+uniform float contrast;
+uniform float hueShift;
+uniform float saturation;
+uniform vec3 colorFilter;
 
 // variables from vertex shader
 in vec2 textureCoordinates;
@@ -58,23 +60,33 @@ void main()
 
 
    //TODO 9.1 : Apply tone mapping using the exposure uniform
-   vec3 color = hdrColor;
+   //vec3 color = hdrColor;
+   vec3 color = 1 - exp(-hdrColor * exposure);
 
 
    //TODO 9.2 : Modify contrast
+   vec3 gray = vec3(0.5, 0.5, 0.5);
 
+   color = color - gray;
+
+   color = color * contrast;
+
+   color = color + gray;
+
+   color = clamp(color, 0.0f, 1.0f);
 
 
    //TODO 9.2 : Modify hue
-
-
+   color = RGBToHSV(color);
+   color.x = fract(color.x + hueShift);
+   color = HSVToRGB(color);
 
    //TODO 9.2 : Modify saturation
-
+   color = clamp(((color - GetLuminance(color)) * saturation) +  GetLuminance(color), 0.0f, 1.0f);
 
 
    //TODO 9.2 : Apply color filter
-
+   color = color * colorFilter;
 
 
    FragColor = vec4(color, 1.0f);
