@@ -361,7 +361,7 @@ int main()
             }
 
             //TODO 9.3 : Blur passes
-            for (int i = 0; i < 0; ++i)
+            for (int i = 0; i < 1; ++i)
             {
                 shader = blur_shader;
                 shader->use();
@@ -402,7 +402,8 @@ int main()
                 shader->setFloat("saturation", config.saturation);
                 shader->setVec3("colorFilter", config.colorFilter);
 
-                drawFullscreenPass("SourceTexture", gAccum);
+                //drawFullscreenPass("SourceTexture", gAccum);
+                drawFullscreenPass("SourceTexture", tempBuffers[0]);
             }
         }
         else if (postFXMode == PostFXMode::CelShading)
@@ -714,19 +715,19 @@ void initFrameBuffers(GLFWwindow* window)
 
 
     // TODO 9.3 : Generate 2 frame buffers (variable tempBuffers) and 2 textures (variable tempTextures)
-
-
+    glGenFramebuffers(2, tempBuffers);
+    glGenFramebuffers(2, tempTextures);
 
     for (int i = 0; i < 2; ++i)
     {
         // TODO 9.3 : Bind and configure temp textures with the same format as the accumulation buffer
-
-
+        glBindFramebuffer(GL_FRAMEBUFFER, tempTextures[i]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gAccum, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, gDepth, 0);
 
         // TODO 9.3 : Bind temp framebuffers and attach the corresponding temp texture as color attachment 0
-
-
-
+        glBindFramebuffer(GL_FRAMEBUFFER, tempBuffers[i]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tempTextures[i], 0);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
