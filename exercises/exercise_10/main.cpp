@@ -16,6 +16,8 @@
 #include "SDFShader.h"
 #include "SDFMaterial.h"
 
+#include <iostream>
+
 // glfw and input functions
 // ------------------------
 GLFWwindow* initOpenGL(unsigned int width, unsigned int height, const char* title);
@@ -102,18 +104,28 @@ int main()
 
         // TODO 10.1 : Set sphere uniforms here, as material properties
 
+        glm::vec3 newSphereCenter = s_Camera->ToViewSpace(sphereCenter, 1);
+
+        //std::cout << newSphereCenter.x << " " << newSphereCenter.y << " " << newSphereCenter.z << std::endl;
+
+        defaultMaterial.SetPropertyValue<glm::vec3>("sphereCenter", newSphereCenter);
+        defaultMaterial.SetPropertyValue<glm::vec3>("sphereColor", sphereColor);
+        defaultMaterial.SetPropertyValue<float>("sphereRadius", sphereRadius);
+
 
 
 
         // TODO 10.1 : Material properties for the box, uncomment
-        //glm::mat4 boxMatrix(1.0f);
-        //boxMatrix = glm::translate(boxMatrix, boxCenter);
-        //boxMatrix = glm::rotate(boxMatrix, boxRotation.z, glm::vec3(0, 0, 1));
-        //boxMatrix = glm::rotate(boxMatrix, boxRotation.x, glm::vec3(1, 0, 0));
-        //boxMatrix = glm::rotate(boxMatrix, boxRotation.y, glm::vec3(0, 1, 0));
-        //defaultMaterial.SetPropertyValue<glm::mat4>("boxMatrix", s_Camera->GetViewMatrix() * boxMatrix);
-        //defaultMaterial.SetPropertyValue<glm::vec3>("boxColor", boxColor);
-        //defaultMaterial.SetPropertyValue<glm::vec3>("boxSize", boxSize);
+        glm::mat4 boxMatrix(1.0f);
+        boxMatrix = glm::translate(boxMatrix, boxCenter);
+        boxMatrix = glm::rotate(boxMatrix, boxRotation.z, glm::vec3(0, 0, 1));
+        boxMatrix = glm::rotate(boxMatrix, boxRotation.x, glm::vec3(1, 0, 0));
+        boxMatrix = glm::rotate(boxMatrix, boxRotation.y, glm::vec3(0, 1, 0));
+        defaultMaterial.SetPropertyValue<glm::mat4>("boxMatrix", s_Camera->GetViewMatrix() * boxMatrix);
+        defaultMaterial.SetPropertyValue<glm::vec3>("boxColor", boxColor);
+        defaultMaterial.SetPropertyValue<glm::vec3>("boxSize", boxSize);
+
+        //std::cout << sphereCenter.x << " " << sphereCenter.y << " " << sphereCenter.z << std::endl;
 
 
         // TODO 10.2 : Set uniforms here, as material properties
@@ -265,6 +277,7 @@ void drawGui()
     {
         ImGui::Begin("Properties");
 
+
         //TODO 10.1 : Properties for exercise 10.1, you can comment these out for 10.2
         {
             ImGui::ColorEdit3("Sphere Color", (float*)&sphereColor);
@@ -273,8 +286,12 @@ void drawGui()
             ImGui::Separator();
 
             //TODO 10.1 : We are missing some properties!
-
-
+            ImGui::ColorEdit3("Box Color", (float*)&boxColor);
+            ImGui::DragFloat3("Box Center", (float*)&boxCenter, 0.0025f, -100, 100);
+            ImGui::DragFloat3("Box Size", (float*)&boxSize, 0.0025f, 0.0f, 5.0f);
+            //ImGui::SliderFloat("Box Size X", (float*)&boxSize.x, 0.0f, 5.0f);
+            //ImGui::SliderFloat("Box Size Y", (float*)&boxSize.y, 0.0f, 5.0f);
+            //ImGui::SliderFloat("Box Size Z", (float*)&boxSize.z, 0.0f, 5.0f);
 
             ImGui::SliderAngle("Box Rotation X", (float*)&boxRotation.x, -180.0f, 180.0f);
             ImGui::SliderAngle("Box Rotation Y", (float*)&boxRotation.y, -180.0f, 180.0f);
