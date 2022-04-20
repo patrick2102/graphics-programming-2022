@@ -55,7 +55,50 @@ namespace rt{
             //  all intersection computations should happen in the same space, no matter what that space is)
             //  - create a ray with the camera origin, and the vector from the camera origin to the pixel you have just found
             //  - call the TraceRay method using that ray, and store the resulting color in the frame buffer (fb)
-            fb.paintAt(fb.W/2, fb.H/2, toRGBA32(white));
+
+            mat4 model_to_view = m * v;
+
+
+            for(int x = 0; x < fb.W; x++)
+            {
+                for (int y = 0; y < fb.H; y++)
+                {
+                    auto pos = lower_left_corner + vec4(pixel_size.x * float(x), pixel_size.y * float(y), 0, 0);
+
+                    auto t = view_to_model * pos;
+
+                    Ray r = Ray(cam_pos, t);
+
+                    auto color = TraceRay(r, depth, vts);
+
+                    fb.paintAt(x, y, toRGBA32(color));
+
+
+                    //auto pos = v * vec4(x, y, 0, 1);
+                    //auto pos = vec4(float(x)/float(fb.W), float(y)/float(fb.H), -1.f, 1);
+                    //auto pos = v * vec4(x, y, 1.0f, 1.0f);
+
+                    /*auto t = view_to_model * pos;
+
+                    Ray r = Ray(cam_pos, t);
+
+                    auto color = TraceRay(r, depth, vts);
+                    auto t = view_to_model * vec4(fb.W/2, fb.H/2, -1, 1);
+
+                    Ray r = Ray(cam_pos, t);
+                    auto color = TraceRay(r, depth, vts);
+
+                    //fb.paintAt(x, y, toRGBA32(color));
+                    fb.paintAt(x, y, toRGBA32(white));
+                     */
+
+                    //fb.paintAt(x, y, val);
+                }
+            }
+
+
+
+            //fb.paintAt(fb.W/2, fb.H/2, toRGBA32(white));
 
         }
 
