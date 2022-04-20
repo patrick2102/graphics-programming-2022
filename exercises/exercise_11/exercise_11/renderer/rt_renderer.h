@@ -63,11 +63,14 @@ namespace rt{
             {
                 for (int y = 0; y < fb.H; y++)
                 {
-                    auto pos = lower_left_corner + vec4(pixel_size.x * float(x), pixel_size.y * float(y), 0, 0);
+                    //auto pos = lower_left_corner + vec4(pixel_size.x * float(x), pixel_size.y * float(y), 0, 0);
+                    auto pos = lower_left_corner + vec4(float(x)/float(fb.W), float(y)/float(fb.H), 0, 0);
 
-                    auto t = view_to_model * pos;
+                    vec4 t = view_to_model * pos;
 
-                    Ray r = Ray(cam_pos, t);
+                    vec4 target = t - cam_pos;
+
+                    Ray r = Ray(cam_pos, target);
 
                     auto color = TraceRay(r, depth, vts);
 
